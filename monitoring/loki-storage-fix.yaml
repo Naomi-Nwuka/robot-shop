@@ -1,0 +1,7 @@
+singleBinary:
+  extraVolumes:
+    - name: loki-data
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: loki-data
+      mountPath: /var/loki

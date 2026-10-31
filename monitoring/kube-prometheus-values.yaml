@@ -1,0 +1,47 @@
+# Lean settings for small EKS nodes (t3.small)
+
+prometheus:
+  prometheusSpec:
+    retention: 2d
+    # lets Prometheus find ServiceMonitors we create later, not just ones from this chart
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    resources:
+      requests: { cpu: 200m, memory: 400Mi }
+      limits:   { memory: 800Mi }
+
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests: { cpu: 25m, memory: 50Mi }
+      limits:   { memory: 100Mi }
+
+grafana:
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits:   { memory: 256Mi }
+
+prometheusOperator:
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits:   { memory: 128Mi }
+
+kube-state-metrics:
+  resources:
+    requests: { cpu: 25m, memory: 48Mi }
+    limits:   { memory: 96Mi }
+
+prometheus-node-exporter:
+  resources:
+    requests: { cpu: 25m, memory: 24Mi }
+    limits:   { memory: 48Mi }
+
+# EKS doesn't expose these control-plane parts, so scraping them only makes red "down" targets
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeProxy:
+  enabled: false

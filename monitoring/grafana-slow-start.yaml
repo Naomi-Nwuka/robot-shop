@@ -1,0 +1,18 @@
+grafana:
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { memory: 512Mi }
+  livenessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 300
+    timeoutSeconds: 30
+    failureThreshold: 10
+  readinessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 30
+    timeoutSeconds: 30
+    failureThreshold: 20

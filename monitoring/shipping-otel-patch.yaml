@@ -1,0 +1,32 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: otel-agent
+          emptyDir: {}
+      initContainers:
+        - name: fetch-otel-agent
+          image: curlimages/curl
+          command:
+            - sh
+            - -c
+            - curl -sSL -o /otel/opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.33.1/opentelemetry-javaagent.jar
+          volumeMounts:
+            - { name: otel-agent, mountPath: /otel }
+      containers:
+        - name: shipping
+          volumeMounts:
+            - { name: otel-agent, mountPath: /otel }
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/otel/opentelemetry-javaagent.jar"
+            - name: OTEL_SERVICE_NAME
+              value: shipping
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.monitoring.svc.cluster.local:4318
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: http/protobuf
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+            - name: OTEL_LOGS_EXPORTER
+              value: none

@@ -1,0 +1,41 @@
+resources:
+  requests: { cpu: 25m, memory: 40Mi }
+  limits:   { memory: 128Mi }
+
+config:
+  inputs: |
+    [INPUT]
+        Name              tail
+        Path              /var/log/containers/*_default_*.log
+        Exclude_Path      /var/log/containers/*fluent-bit*.log
+        Parser            cri
+        Tag               kube.*
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+
+  filters: |
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Merge_Log           Off
+        Keep_Log            On
+        K8S-Logging.Parser  Off
+        K8S-Logging.Exclude Off
+
+    # Robot Shop ships an Instana agent client that logs constant errors; hide them
+    [FILTER]
+        Name     grep
+        Match    kube.*
+        Exclude  log instana
+
+  outputs: |
+    [OUTPUT]
+        Name                   loki
+        Match                  kube.*
+        Host                   loki.monitoring.svc.cluster.local
+        Port                   3100
+        Labels                 job=fluent-bit
+        Label_Keys             $kubernetes['namespace_name'],$kubernetes['pod_name'],$kubernetes['container_name']
+        Auto_Kubernetes_Labels On
+        Line_Format            json
+        Remove_Keys            kubernetes

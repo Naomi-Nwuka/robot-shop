@@ -1,0 +1,21 @@
+resources:
+  requests: { cpu: 10m, memory: 20Mi }
+  limits:   { memory: 64Mi }
+
+serviceMonitor:
+  enabled: true
+  defaults:
+    interval: 15s
+    scrapeTimeout: 10s
+    module: http_2xx
+  targets:
+    - name: web-home
+      url: http://web.default.svc.cluster.local:8080/
+    - name: web-catalogue-products
+      url: http://web.default.svc.cluster.local:8080/api/catalogue/products
+    - name: web-user-uniqueid
+      url: http://web.default.svc.cluster.local:8080/api/user/uniqueid
+    - name: cart-health
+      url: http://cart.default.svc.cluster.local:8080/health
+    - name: payment-health
+      url: http://payment.default.svc.cluster.local:8080/health
