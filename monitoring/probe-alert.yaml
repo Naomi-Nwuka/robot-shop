@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: robot-shop-probe-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: robot-shop-availability
+      rules:
+        - alert: RobotShopProbeFailing
+          expr: probe_success == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: capstone
+          annotations:
+            summary: "Probe {{ $labels.instance }} has been failing for 2 minutes"
+            runbook_url: "https://github.com/Naomi-Nwuka/robot-shop/blob/main/docs/runbook.md"
