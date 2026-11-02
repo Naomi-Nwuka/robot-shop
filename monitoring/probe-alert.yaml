@@ -17,4 +17,4 @@ spec:
             team: capstone
           annotations:
             summary: "Probe {{ $labels.instance }} has been failing for 2 minutes"
-            runbook_url: "https://github.com/Naomi-Nwuka/robot-shop/blob/main/docs/runbook.md"
+            runbook_url: "https://github.com/Naomi-Nwuka/robot-shop/blob/master/docs/runbook.md"
